@@ -69,30 +69,70 @@ addBBoxProposal(const float bx1, const float by1, const float bx2, const float b
   binfo.push_back(bbi);
 }
 
+// Single Class YOLO
 static std::vector<NvDsInferParseObjectInfo>
 decodeTensorYolo(const float* output, const uint& outputSize, const uint& netW, const uint& netH,
     const std::vector<float>& preclusterThreshold)
 {
   std::vector<NvDsInferParseObjectInfo> binfo;
 
+  std::cout << "OUTPUT size: " << outputSize << std::endl;
+  
   for (uint b = 0; b < outputSize; ++b) {
-    float maxProb = output[b * 6 + 4];
-    int maxIndex = (int) output[b * 6 + 5];
+    float maxProb = output[b * 5 + 4];
+    int maxIndex = 0;
 
     if (maxProb < preclusterThreshold[maxIndex]) {
       continue;
     }
 
-    float bx1 = output[b * 6 + 0];
-    float by1 = output[b * 6 + 1];
-    float bx2 = output[b * 6 + 2];
-    float by2 = output[b * 6 + 3];
+    float bx1 = output[b * 5 + 0]* netW;
+    float by1 = output[b * 5 + 1]* netH;
+    float bx2 = output[b * 5 + 2]* netW;
+    float by2 = output[b * 5 + 3]* netH;
 
+    // float cx = output[b * 5 + 0];
+    // float cy = output[b * 5 + 1];
+    // float w  = output[b * 5 + 2];
+    // float h  = output[b * 5 + 3];
+    // float conf = output[b * 5 + 4];
+
+    // float bx1 = (cx - w/2.0f) * netW.width;
+    // float by1 = (cy - h/2.0f) * netW.height;
+    // float bx2 = (cx + w/2.0f) * netW.width;
+    // float by2 = (cy + h/2.0f) * netW.height;
+    std::cout << bx1 << " " << by1 << " " << bx2 << " " << by2 << " " << maxProb << " " << maxIndex << std::endl;
     addBBoxProposal(bx1, by1, bx2, by2, netW, netH, maxIndex, maxProb, binfo);
   }
 
   return binfo;
 }
+
+// Multi-class YOLO model
+// static std::vector<NvDsInferParseObjectInfo>
+// decodeTensorYolo(const float* output, const uint& outputSize, const uint& netW, const uint& netH,
+//     const std::vector<float>& preclusterThreshold)
+// {
+//   std::vector<NvDsInferParseObjectInfo> binfo;
+
+//   for (uint b = 0; b < outputSize; ++b) {
+//     float maxProb = output[b * 6 + 4];
+//     int maxIndex = (int) output[b * 6 + 5];
+
+//     if (maxProb < preclusterThreshold[maxIndex]) {
+//       continue;
+//     }
+
+//     float bx1 = output[b * 6 + 0];
+//     float by1 = output[b * 6 + 1];
+//     float bx2 = output[b * 6 + 2];
+//     float by2 = output[b * 6 + 3];
+
+//     addBBoxProposal(bx1, by1, bx2, by2, netW, netH, maxIndex, maxProb, binfo);
+//   }
+
+//   return binfo;
+// }
 
 static bool
 NvDsInferParseCustomYolo(std::vector<NvDsInferLayerInfo> const& outputLayersInfo,
