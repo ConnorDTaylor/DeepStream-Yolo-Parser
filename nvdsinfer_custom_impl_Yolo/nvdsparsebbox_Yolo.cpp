@@ -76,7 +76,7 @@ decodeTensorYolo(const float* output, const uint& outputSize, const uint& netW, 
 {
   std::vector<NvDsInferParseObjectInfo> binfo;
 
-  std::cout << "OUTPUT size: " << outputSize << std::endl;
+  // std::cout << "OUTPUT size: " << outputSize << std::endl;
   
   for (uint b = 0; b < outputSize; ++b) {
     float maxProb = output[b * 5 + 4];
@@ -91,17 +91,7 @@ decodeTensorYolo(const float* output, const uint& outputSize, const uint& netW, 
     float bx2 = output[b * 5 + 2]* netW;
     float by2 = output[b * 5 + 3]* netH;
 
-    // float cx = output[b * 5 + 0];
-    // float cy = output[b * 5 + 1];
-    // float w  = output[b * 5 + 2];
-    // float h  = output[b * 5 + 3];
-    // float conf = output[b * 5 + 4];
-
-    // float bx1 = (cx - w/2.0f) * netW.width;
-    // float by1 = (cy - h/2.0f) * netW.height;
-    // float bx2 = (cx + w/2.0f) * netW.width;
-    // float by2 = (cy + h/2.0f) * netW.height;
-    std::cout << bx1 << " " << by1 << " " << bx2 << " " << by2 << " " << maxProb << " " << maxIndex << std::endl;
+    // std::cout << bx1 << " " << by1 << " " << bx2 << " " << by2 << " " << maxProb << " " << maxIndex << std::endl;
     addBBoxProposal(bx1, by1, bx2, by2, netW, netH, maxIndex, maxProb, binfo);
   }
 
