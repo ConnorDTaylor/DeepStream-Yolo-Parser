@@ -10,7 +10,10 @@ labelfile-path=/home/shr-uas/data-transfer-MQTT-GStreamer/YOLO_models/labels.txt
 batch-size=1
 network-mode=0
 num-detected-classes=1
-interval=0
+
+# Only look for a detection every second frame.
+interval=2
+
 gie-unique-id=1
 process-mode=1
 network-type=0
